@@ -308,6 +308,8 @@ func (server *Server) createTLSConfig(entryPointName string, tlsOption *TLS, rou
 
 func (server *Server) startServer(srv *manners.GracefulServer, globalConfiguration GlobalConfiguration) {
 	log.Infof("Starting server on %s", srv.Addr)
+	// This disables advertising HTTP/2 in Go 1.6.x
+	srv.TLSNextProto = map[string]func(*http.Server, *tls.Conn, http.Handler){}
 	if srv.TLSConfig != nil {
 		if err := srv.ListenAndServeTLSWithConfig(srv.TLSConfig); err != nil {
 			log.Fatal("Error creating server: ", err)
